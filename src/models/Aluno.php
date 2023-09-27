@@ -64,7 +64,7 @@ class Aluno
     $this->_senha = $senha;
     $this->_rm = $rm;
     $this->_curso = $curso;
-    $this->_status = $type;
+    $this->_type = $type;
   }
 
   /**
