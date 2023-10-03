@@ -23,10 +23,10 @@ class ResponseBuilder
   private static function buildResponse($response)
   {
     // Define o tipo de conteúdo da resposta como JSON.
-    header("Content-Type: application/json");
+    header("Content-Type: application/json; charset=UTF-8");
 
     // Retorna a resposta JSON.
-    return json_encode($response);
+    return json_encode($response, JSON_UNESCAPED_UNICODE);
   }
 
   /**
