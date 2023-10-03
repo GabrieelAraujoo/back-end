@@ -33,6 +33,11 @@ class Administrador
   private $_type;
 
   /**
+   * @var bool $_status O status do aluno.
+   */
+  private $_status;
+
+  /**
    * Construtor da classe Administrador.
    *
    * @param string $nome  O nome do administrador.
@@ -98,6 +103,16 @@ class Administrador
   }
 
   /**
+   * Obtém o status do administrador.
+   *
+   * @return bool O status do administrador.
+   */
+  public function getStatus()
+  {
+    return $this->_status;
+  }
+
+  /**
    * Define o nome do administrador.
    *
    * @param string $nome O novo nome do administrador.
@@ -135,5 +150,15 @@ class Administrador
   public function setType($type)
   {
     $this->_type = $type;
+  }
+
+  /**
+   * Define o status do administrador.
+   *
+   * @param bool $status O novo status a ser definido.
+   */
+  public function setStatus($status)
+  {
+    $this->_status = $status;
   }
 }
