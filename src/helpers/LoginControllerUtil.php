@@ -28,17 +28,11 @@ class LoginControllerUtil
   public static function processarLogin($email, $senha)
   {
     try {
-      if (AuthService::loginUser($email, $senha)) {
-        http_response_code(200);
-        return ResponseBuilder::successResponse(
-          "Autenticação bem-sucedida."
-        );
-      } else {
-        http_response_code(401);
-        return ResponseBuilder::errorResponse(
-          "Autenticação falhou. Verifique suas credenciais."
-        );
-      }
+      AuthService::loginUser($email, $senha);
+      http_response_code(200);
+      return ResponseBuilder::successResponse(
+        "Autenticação bem-sucedida."
+      );
     } catch (ValidationException $e) {
       http_response_code(401);
       return ResponseBuilder::errorResponse(
