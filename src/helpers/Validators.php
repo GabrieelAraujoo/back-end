@@ -36,6 +36,7 @@ class Validators
       throw new ValidationException("Nome contém caracteres inválidos.");
     }
 
+    // Verifica se o nome tem pelo menos 2 caracteres.
     if (strlen($nome) < 2) {
       throw new ValidationException("Nome é muito curto.");
     }
@@ -54,10 +55,12 @@ class Validators
    */
   public static function isValidEmail($email)
   {
+    // Verifique se o e-mail é válido.
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
       throw new ValidationException("E-mail inválido.");
     }
 
+    // Cria uma instância da classe DatabaseOperations.
     $_dbConnection = new DatabaseOperations();
 
     // Verifique se o e-mail já existe no banco de dados usando a classe DatabaseOperations.
@@ -84,10 +87,10 @@ class Validators
       throw new ValidationException("RM inválido.");
     }
 
-    // Crie uma instância da classe DatabaseOperations.
+    // Cria uma instância da classe DatabaseOperations.
     $_dbConnection = new DatabaseOperations();
 
-    // Verifique se o RM já existe no banco de dados usando a classe DatabaseOperations.
+    // Verifica se o RM já existe no banco de dados usando a classe DatabaseOperations.
     if ($_dbConnection->getOneAlunoByRM($rm)) {
       throw new ValidationException("RM inválido. RM já está em uso.");
     }
@@ -106,7 +109,7 @@ class Validators
    */
   public static function isValidPassword($senha)
   {
-    // Verificando se a senha tem pelo menos 8 caracteres.
+    // Verifica se a senha tem pelo menos 8 caracteres.
     if (strlen($senha) < 8) {
       throw new ValidationException("Senha deve ter pelo menos 8 caracteres.");
     }
