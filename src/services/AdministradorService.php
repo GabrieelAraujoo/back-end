@@ -9,6 +9,9 @@ require_once(__DIR__ . '/../config/DatabaseOperations.php');
  */
 class AdministradorService
 {
+  /**
+   * @var DatabaseOperations $_dbConnection Uma instância de DatabaseOperations para interagir com o banco de dados.
+   */
   private $_dbConnection;
 
   /**
