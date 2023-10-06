@@ -41,16 +41,27 @@ class Connection
    */
   function __construct()
   {
-    // Criando uma conexão PDO no construtor, e utilizando o 'try catch' para capturar um possível erro.
+    // Tenta criar uma conexão PDO no construtor.
     try {
-      $this->_dbConnection = new PDO("mysql:host=$this->_host;dbname=$this->_dbName", $this->_user, $this->_password);
-      $this->_dbConnection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+      $this->_dbConnection = new PDO(
+        "mysql:host=$this->_host;dbname=$this->_dbName",
+        $this->_user,
+        $this->_password
+      );
+      $this->_dbConnection->setAttribute(
+        PDO::ATTR_ERRMODE,
+        PDO::ERRMODE_EXCEPTION
+      );
     } catch (PDOException $e) {
+
       // Em caso de erro na conexão, lança uma exceção.
-      throw new Exception("Erro ao conectar com o banco de dados: " . $e->getMessage());
+      throw new Exception(
+        "Erro ao conectar com o banco de dados: {$e->getMessage()}"
+      );
     } catch (Exception $e) {
+
       // Em caso de erro desconhecido, lança uma exceção.
-      throw new Exception("Erro desconhecido: " . $e->getMessage());
+      throw new Exception("Erro desconhecido: {$e->getMessage()}");
     }
   }
 }
