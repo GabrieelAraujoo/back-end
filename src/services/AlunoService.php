@@ -9,6 +9,9 @@ require_once(__DIR__ . '/../config/DatabaseOperations.php');
  */
 class AlunoService
 {
+  /**
+   * @var DatabaseOperations $_dbConnection Uma instância de DatabaseOperations para interagir com o banco de dados.
+   */
   private $_dbConnection;
 
   /**
@@ -44,8 +47,7 @@ class AlunoService
         password_hash($aluno->getSenha(), PASSWORD_DEFAULT),
         $aluno->getRM(),
         $aluno->getCurso(),
-        $aluno->getType(),
-        $aluno->getStatus()
+        $aluno->getType()
       );
     }
     return false;
