@@ -196,7 +196,7 @@ class DatabaseOperations extends Connection
   public function updateAluno($nome, $email, $senha, $curso, $rm)
   {
     // Prepara a consulta SQL para atualizar nome, e-mail e curso de um usuário.
-    $stmt = $this->_dbConnection->prepare("UPDATE usuarios SET nome=?, email=?, curso=?=? WHERE rm=?");
+    $stmt = $this->_dbConnection->prepare("UPDATE usuarios SET nome=?, email=?, curso=? WHERE rm=?");
 
     // Vincula os parâmetros para PDO.
     $stmt->bindParam(1, $nome, PDO::PARAM_STR);
