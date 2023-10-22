@@ -33,7 +33,7 @@ class AlunoService
    *
    * @return bool Retorna true se o cadastro for bem-sucedido, caso contrário, retorna false.
    */
-  public function cadastrarAlunoService(Aluno $aluno)
+  public function cadastrarAluno(Aluno $aluno)
   {
     if (
       Validators::isValidName($aluno->getNome()) &&
