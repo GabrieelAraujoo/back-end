@@ -33,7 +33,7 @@ class AdministradorService
    *
    * @return bool Retorna true se o cadastro for bem-sucedido, caso contrário, retorna false.
    */
-  public function cadastrarAdministradorService(Administrador $adm)
+  public function cadastrarAdministrador(Administrador $adm)
   {
     if (
       Validators::isValidName($adm->getNome()) &&
