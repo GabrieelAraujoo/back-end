@@ -35,7 +35,7 @@ class AdministradorController
    *
    * @return string A resposta JSON que pode conter uma mensagem de sucesso ou erro.
    */
-  public function processarCadastroAdministrador()
+  public function create()
   {
     try {
       $adm = new Administrador(
@@ -46,23 +46,37 @@ class AdministradorController
       );
 
       // Chama o serviço para cadastrar o administrador.
-      $this->_administradorService->cadastrarAdministradorService($adm);
+      $this->_administradorService->cadastrarAdministrador($adm);
 
-      // Retorna uma resposta JSON de sucesso.
-      return ResponseBuilder::successResponse(
+      // Define o código de resposta HTTP para sucesso.
+      http_response_code(200);
+
+      // Define a resposta JSON de sucesso.
+      $response = ResponseBuilder::successResponse(
         "Administrador(a) cadastrado(a) com sucesso."
       );
     } catch (ValidationException $e) {
 
-      return ResponseBuilder::errorResponse(
+      // Define o código de resposta HTTP para falha de validação.
+      http_response_code(400);
+
+      // Define a resposta JSON de erro de validação.
+      $response = ResponseBuilder::errorResponse(
         "Erro de validação: {$e->getMessage()}"
       );
     } catch (Exception $e) {
 
-      return ResponseBuilder::errorResponse(
+      // Define o código de resposta HTTP para erro interno do servidor.
+      http_response_code(500);
+
+      // Define a resposta JSON de erro desconhecido.
+      $response = ResponseBuilder::errorResponse(
         "Erro desconhecido: {$e->getMessage()}"
       );
     }
+
+    // Retorna a resposta final.
+    return $response;
   }
 
   /**
@@ -73,39 +87,29 @@ class AdministradorController
    *
    * @return string Retorna uma resposta JSON com o resultado da autenticação.
    */
-  public function processarLoginAdministrador()
+  public function login()
   {
     // Verifica se a solicitação é do tipo POST.
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
       // Tenta realizar a autenticação.
       try {
-        if (AuthService::login($_POST['email'], $_POST['senha'])) {
+        AuthService::login($_POST['email'], $_POST['senha']);
 
-          // Define o código de resposta HTTP para sucesso.
-          http_response_code(200);
+        // Define o código de resposta HTTP para sucesso.
+        http_response_code(200);
 
-          // Retorna uma resposta JSON de sucesso.
-          return ResponseBuilder::successResponse(
-            "Autenticação bem-sucedida."
-          );
-        } else {
-
-          // Define o código de resposta HTTP para falha de autenticação.
-          http_response_code(401);
-
-          // Retorna uma resposta JSON de falha.
-          return ResponseBuilder::errorResponse(
-            "Autenticação falhou. Verifique suas credenciais."
-          );
-        }
+        // Define a resposta JSON de sucesso.
+        $response = ResponseBuilder::successResponse(
+          "Autenticação bem-sucedida."
+        );
       } catch (ValidationException $e) {
 
         // Define o código de resposta HTTP para falha de validação.
         http_response_code(401);
 
-        // Retorna uma resposta JSON de falha.
-        return ResponseBuilder::errorResponse(
+        // Define a resposta JSON de falha.
+        $response = ResponseBuilder::errorResponse(
           "Autenticação falhou. Verifique suas credenciais."
         );
       } catch (Exception $e) {
@@ -113,17 +117,21 @@ class AdministradorController
         // Define o código de resposta HTTP para erro interno do servidor.
         http_response_code(500);
 
-        // Retorna uma resposta JSON de falha.
-        return ResponseBuilder::errorResponse(
+        // Define a resposta JSON de falha.
+        $response = ResponseBuilder::errorResponse(
           "Erro desconhecido: {$e->getMessage()}"
         );
       }
+    } else {
+
+      // Define o código de resposta HTTP para requisição inválida.
+      http_response_code(400);
+
+      // Define a resposta JSON de falha.
+      $response = ResponseBuilder::errorResponse("Requisição inválida.");
     }
 
-    // Define o código de resposta HTTP para requisição inválida.
-    http_response_code(400);
-
-    // Retorna uma resposta JSON de falha.
-    return ResponseBuilder::errorResponse("Requisição inválida.");
+    // Retorna a resposta final.
+    return $response;
   }
 }
