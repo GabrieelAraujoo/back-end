@@ -60,15 +60,29 @@ class Validators
       throw new ValidationException("E-mail inválido.");
     }
 
+    // Se todas as validações passarem, retorna true.
+    return true;
+  }
+
+  /**
+   * Verifica se um endereço de e-mail já está em uso no banco de dados.
+   *
+   * @param string $email O endereço de e-mail a ser verificado.
+   *
+   * @return bool Retorna verdadeiro se o e-mail estiver disponível.
+   * @throws ValidationException Lança uma exceção se o e-mail já estiver em uso.
+   */
+  public static function isEmailInUse($email)
+  {
     // Cria uma instância da classe DatabaseOperations.
     $_dbConnection = new DatabaseOperations();
 
-    // Verifique se o e-mail já existe no banco de dados usando a classe DatabaseOperations.
+    // Verifique se o e-mail já existe no banco de dados.
     if ($_dbConnection->getOneUserByEmail($email)) {
       throw new ValidationException("E-mail inválido. E-mail já está em uso.");
     }
 
-    // Se todas as validações passarem, retorna true.
+    // Se a validaçõe passar, retorna true.
     return true;
   }
 
@@ -77,8 +91,8 @@ class Validators
    *
    * @param int $rm O RM a ser validado.
    *
-   * @return bool Retorna verdadeiro se o RM for válido e único, false caso contrário.
-   * @throws ValidationException Se o RM não for válido ou não for único.
+   * @return bool Retorna verdadeiro se o RM for válido.
+   * @throws ValidationException Lança uma exceção se o RM não for válido.
    */
   public static function isValidRM($rm)
   {
@@ -87,15 +101,29 @@ class Validators
       throw new ValidationException("RM inválido.");
     }
 
+    // Se todas as validações passarem, retorna true.
+    return true;
+  }
+
+  /**
+   * Verifica se um número de Registro de Matrícula (RM) já está em uso no banco de dados.
+   *
+   * @param string $rm O número de Registro de Matrícula a ser verificado.
+   *
+   * @return bool Retorna true se o RM estiver disponível.
+   * @throws ValidationException Lança uma exceção se o RM já estiver em uso.
+   */
+  public static function isRMInUse($rm)
+  {
     // Cria uma instância da classe DatabaseOperations.
     $_dbConnection = new DatabaseOperations();
 
-    // Verifica se o RM já existe no banco de dados usando a classe DatabaseOperations.
+    // Verifica se o RM já existe no banco de dados.
     if ($_dbConnection->getOneAlunoByRM($rm)) {
       throw new ValidationException("RM inválido. RM já está em uso.");
     }
 
-    // Se todas as validações passarem, retorna true.
+    // Se a validaçõe passar, retorna true.
     return true;
   }
 
@@ -116,12 +144,16 @@ class Validators
 
     // Utilizando expressão regular (Regex) para verificar se a senha contém pelo menos um caractere em maiúsculo.
     if (!preg_match('/[A-Z]/', $senha)) {
-      throw new ValidationException("Senha deve conter pelo menos uma letra maiúscula.");
+      throw new ValidationException(
+        "Senha deve conter pelo menos uma letra maiúscula."
+      );
     }
 
     // Utilizando expressão regular (Regex) para verificar se a senha contém pelo menos um caractere especial (por exemplo, !@#$%^&*).
     if (!preg_match('/[!@#$%^&*]/', $senha)) {
-      throw new ValidationException("Senha deve conter pelo menos um caractere especial.");
+      throw new ValidationException(
+        "Senha deve conter pelo menos um caractere especial."
+      );
     }
 
     // Se todas as validações passarem, retorna true.
