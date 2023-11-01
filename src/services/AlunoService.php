@@ -1,13 +1,14 @@
 <?php
 
 require_once(__DIR__ . '/../models/Aluno.php');
+require_once(__DIR__ . '/../interfaces/DatabaseOperationsProvider.php');
 require_once(__DIR__ . '/../helpers/Validators.php');
 require_once(__DIR__ . '/../config/DatabaseOperations.php');
 
 /**
  * A classe AlunoService fornece métodos para realizar operações relacionadas aos alunos.
  */
-class AlunoService
+class AlunoService implements DatabaseOperationsProvider
 {
   /**
    * @var DatabaseOperations $_dbConnection Uma instância de DatabaseOperations para interagir com o banco de dados.
@@ -33,8 +34,9 @@ class AlunoService
    *
    * @return bool Retorna true se o cadastro for bem-sucedido, caso contrário, retorna false.
    */
-  public function cadastrarAluno(Aluno $aluno)
+  public function create(Aluno $aluno)
   {
+    // Chamando métodos reutilizáveis para validação.
     if (
       Validators::isValidName($aluno->getNome()) &&
       Validators::isValidEmail($aluno->getEmail()) &&

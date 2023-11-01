@@ -1,13 +1,14 @@
 <?php
 
 require_once(__DIR__ . '/../models/Administrador.php');
+require_once(__DIR__ . '/../interfaces/DatabaseOperationsProvider.php');
 require_once(__DIR__ . '/../helpers/Validators.php');
 require_once(__DIR__ . '/../config/DatabaseOperations.php');
 
 /**
  * A classe AdministradorService fornece métodos para realizar operações relacionadas aos administradores.
  */
-class AdministradorService
+class AdministradorService implements DatabaseOperationsProvider
 {
   /**
    * @var DatabaseOperations $_dbConnection Uma instância de DatabaseOperations para interagir com o banco de dados.
