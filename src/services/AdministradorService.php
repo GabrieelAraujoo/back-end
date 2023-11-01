@@ -34,7 +34,7 @@ class AdministradorService implements DatabaseOperationsProvider
    *
    * @return bool Retorna true se o cadastro for bem-sucedido, caso contrário, retorna false.
    */
-  public function cadastrarAdministrador(Administrador $adm)
+  public function create(Administrador $adm)
   {
     if (
       Validators::isValidName($adm->getNome()) &&
