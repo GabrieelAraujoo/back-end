@@ -56,7 +56,7 @@ class AdministradorController implements Controller
       );
 
       // Chama o serviço para cadastrar o administrador.
-      $this->_admService->cadastrarAdministrador($adm);
+      $this->_admService->create($adm);
 
       // Define a resposta JSON de sucesso.
       $response = ResponseBuilder::success(
