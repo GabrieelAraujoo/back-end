@@ -1,52 +1,52 @@
 <?php
 
 require_once(__DIR__ . '/../config/DatabaseOperations.php');
+require_once(__DIR__ . '/../models/AuthenticationCredentials.php');
+require_once(__DIR__ . '/../interfaces/DatabaseOperationsProvider.php');
 require_once(__DIR__ . '/../helpers/exceptions/ValidationException.php');
 
 /**
  * Classe AuthService para autenticação de usuários.
  */
-class AuthService
+class AuthService implements DatabaseOperationsProvider
 {
   /**
-   * Construtor da classe AuthService.
+   * @var DatabaseOperations $_dbConnection Uma instância de DatabaseOperations para interagir com o banco de dados.
    */
-  public function __construct()
+  private $_dbConnection;
+
+  /**
+   * Construtor da classe AuthService.
+   * 
+   * @param DatabaseOperations $dbConnection Uma instância de DatabaseOperations para interagir com o banco de dados.
+   */
+  public function __construct(DatabaseOperations $dbConnection)
   {
-    // O construtor é explícito, mas não realiza nenhuma ação específica.
+    $this->_dbConnection = $dbConnection;
   }
 
   /**
-   * Realiza a autenticação do usuário com base no e-mail e senha fornecidos.
+   * Autentica um usuário com base nas credenciais fornecidas.
    *
-   * @param string $email O e-mail do usuário.
-   * @param string $senha A senha do usuário.
+   * @param AuthenticationCredentials $credentials Um objeto AuthenticationCredentials contendo o e-mail e a senha do usuário.
    *
-   * @return bool Retorna true se o login for bem-sucedido para um aluno ou administrador, caso contrário, retorna false.
-   * @throws ValidationException Lança uma exceção se o e-mail fornecido for inválido.
+   * @return bool Retorna true se o login for bem-sucedido, caso contrário, retorna false.
    */
-  public static function login($email, $senha)
+  public function login(AuthenticationCredentials $credentials)
   {
-    // Verifique se o e-mail é válido.
-    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-      throw new ValidationException("E-mail inválido.");
-    }
+    // Obtém os dados do usuário com base no e-mail fornecido.
+    $user = $this->_dbConnection->getOneUserByEmail($credentials->getEmail());
 
-    // Cria uma instância da classe DatabaseOperations.
-    $_dbConnection = new DatabaseOperations();
+    // Obtém o hash da senha do usuário com base no e-mail fornecido.
+    $hash = $this->_dbConnection->getHashedPasswordByEmail(
+      $credentials->getEmail()
+    );
 
-    // Obtém um usuário com base no e-mail.
-    $user = $_dbConnection->getOneUserByEmail($email);
+    // Verifica se usuário existe e se a senha fornecida coincide com senha armazenada no banco de dados.
+    if ($user && password_verify($credentials->getPassword(), $hash)) {
 
-    // Verifica se o usuário existe e se a senha fornecida coincide com a senha armazenada no banco de dados.
-    if ($user && password_verify($senha, $user['senha'])) {
-
-      // Verifica se o tipo de usuário é 'aluno' ou 'admin'.
-      if ($user['type'] === 'aluno' || $user['type'] === 'admin') {
-
-        // Login bem-sucedido para aluno ou administrador.
-        return true;
-      }
+      // Login bem-sucedido para o usuário (aluno ou admin).
+      return true;
     }
 
     // Retorna falso se o usuário não estiver autenticado.
