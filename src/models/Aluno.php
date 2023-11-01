@@ -1,11 +1,14 @@
 <?php
 
+require_once(__DIR__ . '/../interfaces/User.php');
+
 /**
- * Representa a estrutura de dados de um aluno.
- * Contém propriedades correspondentes às colunas da tabela do banco de dados.
- * Os objetos desta classe são frequentemente usados para mapear registros de banco de dados para objetos na linguagem de programação.
+ * Representa a estrutura de dados de um usuário.
+ * 
+ * Esta classe contém propriedades correspondentes à coluna da tabela 'usuarios' no banco de dados.
+ * É frequentemente usada para mapear registros de banco de dados para objetos na linguagem de programação.
  */
-class Aluno
+class Aluno implements User
 {
   /**
    * @var int $_id O ID único do aluno.
@@ -78,6 +81,16 @@ class Aluno
   }
 
   /**
+   * Define o ID do aluno.
+   *
+   * @param string $id O novo ID do aluno.
+   */
+  public function setId($id)
+  {
+    $this->_id = $id;
+  }
+
+  /**
    * Obtém o nome do aluno.
    *
    * @return string O nome do aluno.
@@ -85,66 +98,6 @@ class Aluno
   public function getNome()
   {
     return $this->_nome;
-  }
-
-  /**
-   * Obtém o endereço de e-mail do aluno.
-   *
-   * @return string O endereço de e-mail do aluno.
-   */
-  public function getEmail()
-  {
-    return $this->_email;
-  }
-
-  /**
-   * Obtém a senha do aluno.
-   *
-   * @return string A senha do aluno.
-   */
-  public function getSenha()
-  {
-    return $this->_senha;
-  }
-
-  /**
-   * Obtém o RM do aluno.
-   *
-   * @return string O RM do aluno.
-   */
-  public function getRM()
-  {
-    return $this->_rm;
-  }
-
-  /**
-   * Obtém o curso do aluno.
-   *
-   * @return string O curso do aluno.
-   */
-  public function getCurso()
-  {
-    return $this->_curso;
-  }
-
-  /**
-   * Obtém o tipo de usuário (aluno, admin).
-   *
-   * @return string O tipo de usuário.
-   */
-  public function getType()
-  {
-    return $this->_type;
-  }
-
-  /**
-   * Obtém o status do aluno.
-   *
-   * @return bool O status do aluno.
-   */
-  public function getStatus()
-  {
-    return $this->_status;
   }
 
   /**
@@ -158,6 +111,16 @@ class Aluno
   }
 
   /**
+   * Obtém o endereço de e-mail do aluno.
+   *
+   * @return string O endereço de e-mail do aluno.
+   */
+  public function getEmail()
+  {
+    return $this->_email;
+  }
+
+  /**
    * Define o endereço de e-mail do aluno.
    *
    * @param string $email O novo endereço de e-mail a ser definido.
@@ -165,6 +128,16 @@ class Aluno
   public function setEmail($email)
   {
     $this->_email = $email;
+  }
+
+  /**
+   * Obtém a senha do aluno.
+   *
+   * @return string A senha do aluno.
+   */
+  public function getSenha()
+  {
+    return $this->_senha;
   }
 
   /**
@@ -178,6 +151,16 @@ class Aluno
   }
 
   /**
+   * Obtém o RM do aluno.
+   *
+   * @return string O RM do aluno.
+   */
+  public function getRM()
+  {
+    return $this->_rm;
+  }
+
+  /**
    * Define o RM do aluno.
    *
    * @param int $rm O novo RM a ser definido.
@@ -185,6 +168,16 @@ class Aluno
   public function setRM($rm)
   {
     $this->_rm = $rm;
+  }
+
+  /**
+   * Obtém o curso do aluno.
+   *
+   * @return string O curso do aluno.
+   */
+  public function getCurso()
+  {
+    return $this->_curso;
   }
 
   /**
@@ -198,6 +191,16 @@ class Aluno
   }
 
   /**
+   * Obtém o tipo de usuário (aluno, admin).
+   *
+   * @return string O tipo de usuário.
+   */
+  public function getType()
+  {
+    return $this->_type;
+  }
+
+  /**
    * Define o tipo de usuário (aluno, admin).
    *
    * @param string $type O tipo de usuário a ser definido.
@@ -205,6 +208,16 @@ class Aluno
   public function setType($type)
   {
     $this->_type = $type;
+  }
+
+  /**
+   * Obtém o status do aluno.
+   *
+   * @return bool O status do aluno.
+   */
+  public function getStatus()
+  {
+    return $this->_status;
   }
 
   /**

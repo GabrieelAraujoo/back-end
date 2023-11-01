@@ -1,11 +1,14 @@
 <?php
 
+require_once(__DIR__ . '/../interfaces/User.php');
+
 /**
- * Representa a estrutura de dados de um administrador.
- * Contém propriedades correspondentes às colunas da tabela do banco de dados.
- * Os objetos desta classe são frequentemente usados para mapear registros de banco de dados para objetos na linguagem de programação.
+ * Representa a estrutura de dados de um usuário.
+ * 
+ * Esta classe contém propriedades correspondentes à coluna da tabela 'usuarios' no banco de dados.
+ * É frequentemente usada para mapear registros de banco de dados para objetos na linguagem de programação.
  */
-class Administrador
+class Administrador implements User
 {
   /**
    * @var int $_id O ID único do administrador.
@@ -33,7 +36,7 @@ class Administrador
   private $_type;
 
   /**
-   * @var bool $_status O status do aluno.
+   * @var bool $_status O status do administrador.
    */
   private $_status;
 
@@ -63,6 +66,16 @@ class Administrador
   }
 
   /**
+   * Define o ID do administrador.
+   *
+   * @param string $id O novo ID do administrador.
+   */
+  public function setId($id)
+  {
+    $this->_id = $id;
+  }
+
+  /**
    * Obtém o nome do administrador.
    *
    * @return string O nome do administrador.
@@ -70,46 +83,6 @@ class Administrador
   public function getNome()
   {
     return $this->_nome;
-  }
-
-  /**
-   * Obtém o endereço de e-mail do administrador.
-   *
-   * @return string O endereço de e-mail do administrador.
-   */
-  public function getEmail()
-  {
-    return $this->_email;
-  }
-
-  /**
-   * Obtém a senha do administrador.
-   *
-   * @return string A senha do administrador.
-   */
-  public function getSenha()
-  {
-    return $this->_senha;
-  }
-
-  /**
-   * Obtém o tipo de usuário (usuário, admin).
-   *
-   * @return string O tipo de usuário do administrador.
-   */
-  public function getType()
-  {
-    return $this->_type;
-  }
-
-  /**
-   * Obtém o status do administrador.
-   *
-   * @return bool O status do administrador.
-   */
-  public function getStatus()
-  {
-    return $this->_status;
   }
 
   /**
@@ -123,9 +96,19 @@ class Administrador
   }
 
   /**
+   * Obtém o endereço de e-mail do administrador.
+   *
+   * @return string O endereço de e-mail do administrador.
+   */
+  public function getEmail()
+  {
+    return $this->_email;
+  }
+
+  /**
    * Define o endereço de e-mail do administrador.
    *
-   * @param string $email O novo endereço de e-mail do administrador.
+   * @param string $email O novo endereço de e-mail a ser definido.
    */
   public function setEmail($email)
   {
@@ -133,13 +116,33 @@ class Administrador
   }
 
   /**
+   * Obtém a senha do administrador.
+   *
+   * @return string A senha do administrador.
+   */
+  public function getSenha()
+  {
+    return $this->_senha;
+  }
+
+  /**
    * Define a senha do administrador.
    *
-   * @param string $senha A nova senha do administrador.
+   * @param string $senha A nova senha a ser definida.
    */
   public function setSenha($senha)
   {
     $this->_senha = $senha;
+  }
+
+  /**
+   * Obtém o tipo de usuário (aluno, admin).
+   *
+   * @return string O tipo de usuário.
+   */
+  public function getType()
+  {
+    return $this->_type;
   }
 
   /**
@@ -150,6 +153,16 @@ class Administrador
   public function setType($type)
   {
     $this->_type = $type;
+  }
+
+  /**
+   * Obtém o status do administrador.
+   *
+   * @return bool O status do administrador.
+   */
+  public function getStatus()
+  {
+    return $this->_status;
   }
 
   /**
