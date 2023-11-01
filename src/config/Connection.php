@@ -39,7 +39,7 @@ class Connection
    *
    * @throws Exception Lança uma exceção em caso de erro na conexão.
    */
-  function __construct()
+  protected function __construct()
   {
     // Tenta criar uma conexão PDO no construtor.
     try {
@@ -55,7 +55,7 @@ class Connection
     } catch (PDOException $e) {
 
       // Em caso de erro na conexão, lança uma exceção.
-      throw new Exception(
+      throw new PDOException(
         "Erro ao conectar com o banco de dados: {$e->getMessage()}"
       );
     } catch (Exception $e) {
