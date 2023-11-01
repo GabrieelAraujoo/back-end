@@ -2,6 +2,7 @@
 
 require_once(__DIR__ . '/../services/AdministradorService.php');
 require_once(__DIR__ . '/../services/AuthService.php');
+require_once(__DIR__ . '/../interfaces/Controller.php');
 require_once(__DIR__ . '/../helpers/ResponseBuilder.php');
 require_once(__DIR__ . '/../models/Administrador.php');
 require_once(__DIR__ . '/../helpers/exceptions/ValidationException.php');
@@ -9,31 +10,40 @@ require_once(__DIR__ . '/../helpers/exceptions/ValidationException.php');
 /**
  * Controlador responsável por processar solicitações relacionadas ao cadastro de administradores.
  */
-class AdministradorController
+class AdministradorController implements Controller
 {
   /**
-   * @var AdministradorService $_administradorService O serviço de administradores.
+   * @var AdministradorService $_admService O serviço de administradores.
    */
-  private $_administradorService;
+  private $_admService;
+
+  /**
+   * @var AuthService $_authService O serviço de autenticação.
+   */
+  private $_authService;
 
   /**
    * Construtor da classe AdministradorController.
    *
-   * @param AdministradorService $administradorService Uma instância do serviço de administradores.
+   * @param AdministradorService $admService Uma instância do serviço de administradores.
+   * @param AuthService $authService Uma instância do serviço de autenticação.
    */
-  public function __construct(AdministradorService $administradorService)
+  public function __construct(
+    AdministradorService $admService,
+    AuthService $authService
+  ) {
+    $this->_admService = $admService;
+    $this->_authService = $authService;
+  }
+
+  public function getAll()
   {
-    $this->_administradorService = $administradorService;
   }
 
   /**
-   * Processa o cadastro de um administrador com base nos dados do formulário.
+   * Método para criar um novo administrador a partir dos dados fornecidos no corpo da solicitação.
    *
-   * Este método cria um objeto Administrador com base nos valores do formulário no $_POST
-   * e chama o serviço para cadastrar o administrador. Retorna uma resposta JSON de sucesso
-   * em caso de sucesso ou uma resposta JSON de erro em caso de validação falha.
-   *
-   * @return string A resposta JSON que pode conter uma mensagem de sucesso ou erro.
+   * @return string Resposta JSON com o resultado da criação do administrador.
    */
   public function create()
   {
@@ -46,32 +56,26 @@ class AdministradorController
       );
 
       // Chama o serviço para cadastrar o administrador.
-      $this->_administradorService->cadastrarAdministrador($adm);
-
-      // Define o código de resposta HTTP para sucesso.
-      http_response_code(200);
+      $this->_admService->cadastrarAdministrador($adm);
 
       // Define a resposta JSON de sucesso.
-      $response = ResponseBuilder::successResponse(
-        "Administrador(a) cadastrado(a) com sucesso."
+      $response = ResponseBuilder::success(
+        "Administrador(a) cadastrado(a) com sucesso.",
+        200
       );
     } catch (ValidationException $e) {
 
-      // Define o código de resposta HTTP para falha de validação.
-      http_response_code(400);
-
       // Define a resposta JSON de erro de validação.
-      $response = ResponseBuilder::errorResponse(
-        "Erro de validação: {$e->getMessage()}"
+      $response = ResponseBuilder::error(
+        "Erro de validação: {$e->getMessage()}",
+        400
       );
     } catch (Exception $e) {
 
-      // Define o código de resposta HTTP para erro interno do servidor.
-      http_response_code(500);
-
       // Define a resposta JSON de erro desconhecido.
-      $response = ResponseBuilder::errorResponse(
-        "Erro desconhecido: {$e->getMessage()}"
+      $response = ResponseBuilder::error(
+        "Erro desconhecido: {$e->getMessage()}",
+        500
       );
     }
 
@@ -79,56 +83,49 @@ class AdministradorController
     return $response;
   }
 
+  public function update()
+  {
+  }
+  public function delete()
+  {
+  }
+
   /**
-   * Processa a solicitação de login do administrador.
+   * Método para autenticar um administrador com base nas credenciais fornecidas no corpo da solicitação.
    *
-   * Verifica se a solicitação é do tipo POST e tenta autenticar o administrador
-   * com base nas credenciais fornecidas.
-   *
-   * @return string Retorna uma resposta JSON com o resultado da autenticação.
+   * @return string Resposta JSON com o resultado da autenticação do administrador.
    */
   public function login()
   {
-    // Verifica se a solicitação é do tipo POST.
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Tenta realizar a autenticação.
+    try {
+      $userCredentials = new AuthenticationCredentials(
+        $_POST["email"],
+        $_POST["password"]
+      );
 
-      // Tenta realizar a autenticação.
-      try {
-        AuthService::login($_POST['email'], $_POST['senha']);
+      // Chama o serviço para autenticar o aluno.
+      $this->_authService->login($userCredentials);
 
-        // Define o código de resposta HTTP para sucesso.
-        http_response_code(200);
-
-        // Define a resposta JSON de sucesso.
-        $response = ResponseBuilder::successResponse(
-          "Autenticação bem-sucedida."
-        );
-      } catch (ValidationException $e) {
-
-        // Define o código de resposta HTTP para falha de validação.
-        http_response_code(401);
-
-        // Define a resposta JSON de falha.
-        $response = ResponseBuilder::errorResponse(
-          "Autenticação falhou. Verifique suas credenciais."
-        );
-      } catch (Exception $e) {
-
-        // Define o código de resposta HTTP para erro interno do servidor.
-        http_response_code(500);
-
-        // Define a resposta JSON de falha.
-        $response = ResponseBuilder::errorResponse(
-          "Erro desconhecido: {$e->getMessage()}"
-        );
-      }
-    } else {
-
-      // Define o código de resposta HTTP para requisição inválida.
-      http_response_code(400);
+      // Define a resposta JSON de sucesso.
+      $response = ResponseBuilder::success(
+        "Autenticação bem-sucedida.",
+        200
+      );
+    } catch (ValidationException $e) {
 
       // Define a resposta JSON de falha.
-      $response = ResponseBuilder::errorResponse("Requisição inválida.");
+      $response = ResponseBuilder::error(
+        "Autenticação falhou. Verifique suas credenciais.",
+        401
+      );
+    } catch (Exception $e) {
+
+      // Define a resposta JSON de falha.
+      $response = ResponseBuilder::error(
+        "Erro desconhecido: {$e->getMessage()}",
+        500
+      );
     }
 
     // Retorna a resposta final.

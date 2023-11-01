@@ -2,6 +2,7 @@
 
 require_once(__DIR__ . '/../services/AlunoService.php');
 require_once(__DIR__ . '/../services/AuthService.php');
+require_once(__DIR__ . '/../interfaces/Controller.php');
 require_once(__DIR__ . '/../helpers/ResponseBuilder.php');
 require_once(__DIR__ . '/../models/Aluno.php');
 require_once(__DIR__ . '/../helpers/exceptions/ValidationException.php');
@@ -9,7 +10,7 @@ require_once(__DIR__ . '/../helpers/exceptions/ValidationException.php');
 /**
  * Controlador responsável por processar solicitações relacionadas ao cadastro de alunos.
  */
-class AlunoController
+class AlunoController implements Controller
 {
   /**
    * @var AlunoService $_alunoService O serviço de alunos.
@@ -17,25 +18,61 @@ class AlunoController
   private $_alunoService;
 
   /**
+   * @var AuthService $_authService O serviço de autenticação.
+   */
+  private $_authService;
+
+  /**
    * Construtor da classe AlunoController.
    *
    * @param AlunoService $alunoService Uma instância do serviço de alunos.
+   * @param AuthService $authService Uma instância do serviço de autenticação.
    */
-  public function __construct(AlunoService $alunoService)
-  {
+  public function __construct(
+    AlunoService $alunoService,
+    AuthService $authService
+  ) {
     $this->_alunoService = $alunoService;
+    $this->_authService = $authService;
   }
 
   /**
-   * Processa a solicitação de cadastro de um aluno.
+   * Obtém todos os alunos cadastrados no sistema.
    *
-   * Este método recebe os dados do aluno através de uma solicitação POST, cria uma instância
-   * de aluno e chama o serviço para cadastrar o aluno. Em caso de sucesso, retorna
-   * uma resposta JSON indicando que o aluno foi cadastrado com sucesso. Em caso de erro de
-   * validação ou erro desconhecido, retorna uma resposta JSON de erro.
+   * Este método chama o serviço para buscar todos os alunos e retorna uma resposta JSON
+   * contendo os alunos encontrados.
    *
-   * @return string Uma resposta JSON indicando o resultado do cadastro. A resposta
-   * contém informações sobre o sucesso ou falha do cadastro.
+   * @return string Uma resposta JSON contendo a lista de alunos ou uma mensagem de erro.
+   */
+  public function getAll()
+  {
+    // Tenta buscar todos os alunos.
+    try {
+      // $alunos = $this->_alunoService->;
+
+      // Define a resposta JSON com a lista de alunos.
+      $response = ResponseBuilder::success(
+        "Lista de alunos(as) obtida com sucesso.",
+        200,
+        // $alunos
+      );
+    } catch (Exception $e) {
+
+      // Define a resposta JSON de erro em caso de falha.
+      $response = ResponseBuilder::error(
+        "Erro ao buscar alunos: {$e->getMessage()}",
+        500
+      );
+    }
+
+    // Retorna a resposta final.
+    return $response;
+  }
+
+  /**
+   * Método para criar um novo aluno a partir dos dados fornecidos no corpo da solicitação.
+   *
+   * @return string Resposta JSON com o resultado da criação do aluno.
    */
   public function create()
   {
@@ -51,32 +88,26 @@ class AlunoController
       );
 
       // Chama o serviço para cadastrar o aluno.
-      $this->_alunoService->cadastrarAluno($aluno);
-
-      // Define o código de resposta HTTP para sucesso.
-      http_response_code(200);
+      $this->_alunoService->create($aluno);
 
       // Define a resposta JSON de sucesso.
-      $response = ResponseBuilder::successResponse(
-        "Aluno(a) cadastrado(a) com sucesso."
+      $response = ResponseBuilder::success(
+        "Aluno(a) cadastrado(a) com sucesso.",
+        200
       );
     } catch (ValidationException $e) {
 
-      // Define o código de resposta HTTP para falha de validação.
-      http_response_code(400);
-
       // Define a resposta JSON de erro de validação.
-      $response = ResponseBuilder::errorResponse(
-        "Erro de validação: {$e->getMessage()}"
+      $response = ResponseBuilder::error(
+        "Erro de validação: {$e->getMessage()}",
+        400
       );
     } catch (Exception $e) {
 
-      // Define o código de resposta HTTP para erro interno do servidor.
-      http_response_code(500);
-
       // Define a resposta JSON de erro desconhecido.
-      $response = ResponseBuilder::errorResponse(
-        "Erro desconhecido: {$e->getMessage()}"
+      $response = ResponseBuilder::error(
+        "Erro desconhecido: {$e->getMessage()}",
+        500
       );
     }
 
@@ -84,58 +115,49 @@ class AlunoController
     return $response;
   }
 
+  public function update()
+  {
+  }
+  public function delete()
+  {
+  }
+
   /**
-   * Processa a solicitação de login do aluno.
+   * Método para autenticar um aluno com base nas credenciais fornecidas no corpo da solicitação.
    *
-   * Este método verifica se a solicitação HTTP é do tipo POST e tenta autenticar o aluno
-   * com base nas credenciais fornecidas. Ele retorna uma resposta JSON que indica o resultado
-   * da autenticação, incluindo sucesso, falha de autenticação, falha de validação ou erro interno.
-   *
-   * @return string Uma resposta JSON contendo informações sobre o resultado da autenticação.
-   * O formato da resposta pode incluir mensagens de sucesso ou erro, bem como códigos de status HTTP.
+   * @return string Resposta JSON com o resultado da autenticação do aluno.
    */
   public function login()
   {
-    // Verifica se a solicitação é do tipo POST.
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Tenta realizar a autenticação.
+    try {
+      $userCredentials = new AuthenticationCredentials(
+        $_POST["email"],
+        $_POST["password"]
+      );
 
-      // Tenta realizar a autenticação.
-      try {
-        AuthService::login($_POST['email'], $_POST['senha']);
+      // Chama o serviço para autenticar o aluno.
+      $this->_authService->login($userCredentials);
 
-        // Define o código de resposta HTTP para sucesso.
-        http_response_code(200);
-
-        // Define a resposta JSON de sucesso.
-        $response = ResponseBuilder::successResponse(
-          "Autenticação bem-sucedida."
-        );
-      } catch (ValidationException $e) {
-
-        // Define o código de resposta HTTP para falha de validação.
-        http_response_code(401);
-
-        // Define a resposta JSON de falha.
-        $response = ResponseBuilder::errorResponse(
-          "Autenticação falhou. Verifique suas credenciais."
-        );
-      } catch (Exception $e) {
-
-        // Define o código de resposta HTTP para erro interno do servidor.
-        http_response_code(500);
-
-        // Define a resposta JSON de falha.
-        $response = ResponseBuilder::errorResponse(
-          "Erro desconhecido: {$e->getMessage()}"
-        );
-      }
-    } else {
-
-      // Define o código de resposta HTTP para requisição inválida.
-      http_response_code(400);
+      // Define a resposta JSON de sucesso.
+      $response = ResponseBuilder::success(
+        "Autenticação bem-sucedida.",
+        200
+      );
+    } catch (ValidationException $e) {
 
       // Define a resposta JSON de falha.
-      $response = ResponseBuilder::errorResponse("Requisição inválida.");
+      $response = ResponseBuilder::error(
+        "Autenticação falhou. Verifique suas credenciais.",
+        401
+      );
+    } catch (Exception $e) {
+
+      // Define a resposta JSON de falha.
+      $response = ResponseBuilder::error(
+        "Erro desconhecido: {$e->getMessage()}",
+        500
+      );
     }
 
     // Retorna a resposta final.
