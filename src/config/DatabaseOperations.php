@@ -20,6 +20,289 @@ class DatabaseOperations extends Connection
   }
 
   /**
+   * Obtém todos os usuários do banco de dados.
+   *
+   * @return array|false Retorna um array associativo com os dados dos usuários se a consulta for bem-sucedida.
+   * Em caso de falha na consulta, retorna false.
+   */
+  public function getUsers()
+  {
+    // Prepara a consulta SQL para obter todos os usuários.
+    $stmt = $this->_dbConnection->prepare(
+      "SELECT id, nome, email, senha, rm, curso, type FROM usuarios"
+    );
+
+    // Executa a consulta SQL.
+    $stmt->execute();
+
+    // Retorna os resultados como um array associativo.
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+  }
+
+  /**
+   * Obtém os usuários com base no nome.
+   *
+   * @param string $nome O nome dos usuários a serem obtidos.
+   *
+   * @return array|false Retorna um array associativo com os dados dos usuários se a consulta for bem-sucedida.
+   * Em caso de falha na consulta, retorna false.
+   */
+  public function getUsersByNome($nome)
+  {
+    // Prepara a consulta SQL para obter todos os usuários pelo nome especificado.
+    $stmt = $this->_dbConnection->prepare(
+      "SELECT id, nome, email, senha, rm, curso, type FROM usuarios
+      WHERE nome = ?"
+    );
+
+    // Vincula o parâmetro para PDO.
+    $stmt->bindParam(1, $nome, PDO::PARAM_STR);
+
+    // Executa a consulta SQL.
+    $stmt->execute();
+
+    // Retorna o resultado como um array associativo.
+    return $stmt->fetch(PDO::FETCH_ASSOC);
+  }
+
+  /**
+   * Obtém todos os usuários de um tipo específico do banco de dados.
+   *
+   * @param string $type O tipo de usuário a ser filtrado (aluno, admin).
+   * @return array|false Retorna um array associativo com os dados dos usuários do tipo especificado se a consulta for bem-sucedida.
+   * Em caso de falha na consulta, retorna false.
+   */
+  public function getUsersByType($type)
+  {
+    // Prepara a consulta SQL para obter todos os usuários pelo tipo especificado.
+    $stmt = $this->_dbConnection->prepare(
+      "SELECT id, nome, email, senha, rm, curso, type FROM usuarios
+      WHERE type = ?"
+    );
+
+    // Vincula o parâmetro para PDO.
+    $stmt->bindParam(1, $type, PDO::PARAM_STR);
+
+    // Executa a consulta SQL.
+    $stmt->execute();
+
+    // Retorna os resultados como um array associativo.
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+  }
+
+  /**
+   * Obtém todos os usuários de um curso específico do banco de dados.
+   *
+   * @param string $curso O curso a ser filtrado.
+   * @return array|false Retorna um array associativo com os dados dos usuários do curso especificado se a consulta for bem-sucedida.
+   * Em caso de falha na consulta, retorna false.
+   */
+  public function getUsersByCurso($curso)
+  {
+    // Prepara a consulta SQL para obter todos os usuários pelo curso especificado.
+    $stmt = $this->_dbConnection->prepare(
+      "SELECT id, nome, email, senha, rm, curso, type FROM usuarios
+      WHERE curso = ?"
+    );
+
+    // Vincula o parâmetro para PDO.
+    $stmt->bindParam(1, $curso, PDO::PARAM_STR);
+
+    // Executa a consulta SQL.
+    $stmt->execute();
+
+    // Retorna os resultados como um array associativo.
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+  }
+
+  /**
+   * Obtém um usuário com base no seu ID.
+   *
+   * @param int $id O ID do usuário a ser obtido.
+   *
+   * @return array|false Retorna um array associativo com os dados do usuário se a consulta for bem-sucedida.
+   * Em caso de falha na consulta, retorna false.
+   */
+  public function getOneUserById($id)
+  {
+    // Prepara a consulta SQL para obter um usuário pelo ID.
+    $stmt = $this->_dbConnection->prepare(
+      "SELECT id, nome, email, senha, rm, curso, type FROM usuarios
+      WHERE id = ?"
+    );
+
+    // Vincula o parâmetro para PDO.
+    $stmt->bindParam(1, $id, PDO::PARAM_STR);
+
+    // Executa a consulta SQL.
+    $stmt->execute();
+
+    // Retorna o resultado como um array associativo.
+    return $stmt->fetch(PDO::FETCH_ASSOC);
+  }
+
+  /**
+   * Obtém um usuário com base no seu e-mail.
+   *
+   * @param string $email O e-mail a ser obtido.
+   *
+   * @return array|false Retorna um array associativo com os dados do usuário se a consulta for bem-sucedida.
+   * Em caso de falha na consulta, retorna false.
+   */
+  public function getOneUserByEmail($email)
+  {
+    // Prepara a consulta SQL para obter um usuário por E-mail.
+    $stmt = $this->_dbConnection->prepare(
+      "SELECT id, nome, email, senha, rm, curso, type FROM usuarios
+      WHERE email = ?"
+    );
+
+    // Vincula o parâmetro para PDO.
+    $stmt->bindParam(1, $email, PDO::PARAM_STR);
+
+    // Executa a consulta SQL.
+    $stmt->execute();
+
+    // Retorna o resultado como um array associativo.
+    return $stmt->fetch(PDO::FETCH_ASSOC);
+  }
+
+  /**
+   * Obtém o hash da senha de um usuário pelo e-mail.
+   *
+   * @param string $email O endereço de e-mail do usuário.
+   * 
+   * @return array|false Retorna um array associativo com o hash da senha do usuário se a consulta for bem-sucedida.
+   * Em caso de falha na consulta, retorna false.
+   */
+  public function getHashedPasswordByEmail($email)
+  {
+    // Prepara a consulta SQL para obter o hash da senha do usuário pelo e-mail especificado.
+    $stmt = $this->_dbConnection->prepare(
+      "SELECT id, nome, email, senha, rm, curso, type FROM usuarios
+      WHERE senha = ?"
+    );
+
+    // Vincula o parâmetro para PDO.
+    $stmt->bindParam(1, $email, PDO::PARAM_STR);
+
+    // Executa a consulta SQL.
+    $stmt->execute();
+
+    // Retorna o resultado como um array associativo.
+    return $stmt->fetch(PDO::FETCH_ASSOC);
+  }
+
+  /**
+   * Obtém um aluno com base no seu RM.
+   *
+   * @param int $rm O RM do aluno a ser obtido.
+   *
+   * @return array|false Retorna um array associativo com os dados do aluno se a consulta for bem-sucedida.
+   * Em caso de falha na consulta, retorna false.
+   */
+  public function getOneAlunoByRM($rm)
+  {
+    // Prepara a consulta SQL para obter um usuário por RM.
+    $stmt = $this->_dbConnection->prepare(
+      "SELECT id, nome, email, senha, rm, curso, type FROM usuarios
+      WHERE rm = ?"
+    );
+
+    // Vincula o parâmetro para PDO.
+    $stmt->bindParam(1, $rm, PDO::PARAM_INT);
+
+    // Executa a consulta SQL.
+    $stmt->execute();
+
+    // Retorna o resultado como um array associativo.
+    return $stmt->fetch(PDO::FETCH_ASSOC);
+  }
+
+  /**
+   * Obtém todos os armários do banco de dados.
+   *
+   * @return array|false Retorna um array associativo com os dados de todos os armários se a consulta for bem-sucedida.
+   * Em caso de falha na consulta, retorna false.
+   */
+  public function getArmarios()
+  {
+    // Prepara a consulta SQL para obter todos os armários.
+    $stmt = $this->_dbConnection->prepare(
+      "SELECT id_arm, letra, numero, quantidade FROM armarios"
+    );
+
+    // Executa a consulta SQL.
+    $stmt->execute();
+
+    // Retorna os resultados como um array associativo.
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+  }
+
+  public function getOneArmarioById($id)
+  {
+    // Prepara a consulta SQL para obter um armário pelo ID.
+    $stmt = $this->_dbConnection->prepare(
+      "SELECT id_arm, letra, numero, quantidade FROM armarios
+        WHERE id = ?"
+    );
+
+    // Vincula o parâmetro para PDO.
+    $stmt->bindParam(1, $letra, PDO::PARAM_STR);
+
+    // Executa a consulta SQL.
+    $stmt->execute();
+
+    // Retorna os resultados como um array associativo.
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+  }
+
+  /**
+   * Obtém os armários de um determinado tipo associados a uma letra.
+   *
+   * Este método executa uma consulta SQL para buscar os armários de um tipo específico
+   * associados a uma letra. Os resultados são retornados como um array associativo.
+   *
+   * @param string $letra A letra associada aos armários.
+   * @return array Um array associativo contendo os resultados da consulta.
+   */
+  public function getArmariosByLetra($letra)
+  {
+    // Prepara a consulta SQL para buscar os armários pela letra.
+    $stmt = $this->_dbConnection->prepare(
+      "SELECT id_arm, letra, numero, quantidade FROM armarios
+      WHERE letra = ?"
+    );
+
+    // Vincula o parâmetro para PDO.
+    $stmt->bindParam(1, $letra, PDO::PARAM_STR);
+
+    // Executa a consulta SQL.
+    $stmt->execute();
+
+    // Retorna os resultados como um array associativo.
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+  }
+
+  public function getArmariosByNumero($numero)
+  {
+    // Prepara a consulta SQL para buscar os armários pelo número.
+    $stmt = $this->_dbConnection->prepare(
+      "SELECT id_arm, letra, numero, quantidade FROM armarios
+      WHERE numero = ?"
+    );
+
+    // Vincula o parâmetro para PDO.
+    $stmt->bindParam(1, $numero, PDO::PARAM_STR);
+
+    // Executa a consulta SQL.
+    $stmt->execute();
+
+    // Retorna os resultados como um array associativo.
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+  }
+
+  /**
    * Cria um novo aluno no banco de dados.
    *
    * @param string $nome O nome do aluno.
@@ -35,7 +318,10 @@ class DatabaseOperations extends Connection
   public function createAluno($nome, $email, $senha, $rm, $curso, $type)
   {
     // Prepara a consulta SQL para inserir um novo aluno.
-    $stmt = $this->_dbConnection->prepare("INSERT INTO usuarios (nome, email, senha, rm, curso, type) VALUES (?, ?, ?, ?, ?, ?)");
+    $stmt = $this->_dbConnection->prepare(
+      "INSERT INTO usuarios (nome, email, senha, rm, curso, type)
+      VALUES (?, ?, ?, ?, ?, ?)"
+    );
 
     // Vincula os parâmetros para PDO.
     $stmt->bindParam(1, $nome, PDO::PARAM_STR);
@@ -45,7 +331,7 @@ class DatabaseOperations extends Connection
     $stmt->bindParam(5, $curso, PDO::PARAM_STR);
     $stmt->bindParam(6, $type, PDO::PARAM_STR);
 
-    // Executa a consulta SQL e retorna true se for bem-sucedida, caso contrário, retorna false.
+    // Executa a consulta SQL e retorna true se for bem-sucedida.
     return $stmt->execute();
   }
 
@@ -62,7 +348,10 @@ class DatabaseOperations extends Connection
   public function createAdm($nome, $email, $senha, $type)
   {
     // Prepara a consulta SQL para inserir um novo administrador.
-    $stmt = $this->_dbConnection->prepare("INSERT INTO usuarios (nome, email, senha, type) VALUES (?, ?, ?, ?)");
+    $stmt = $this->_dbConnection->prepare(
+      "INSERT INTO usuarios (nome, email, senha, type)
+      VALUES (?, ?, ?, ?)"
+    );
 
     // Vincula os parâmetros para PDO.
     $stmt->bindParam(1, $nome, PDO::PARAM_STR);
@@ -70,117 +359,15 @@ class DatabaseOperations extends Connection
     $stmt->bindParam(3, $senha, PDO::PARAM_STR);
     $stmt->bindParam(4, $type, PDO::PARAM_STR);
 
-    // Executa a consulta SQL e retorna true se for bem-sucedida, caso contrário, retorna false.
+    // Executa a consulta SQL e retorna true se for bem-sucedida.
     return $stmt->execute();
   }
 
-  /**
-   * Obtém todos os usuários do banco de dados.
-   *
-   * @return array|false Retorna um array associativo com os dados dos usuários se a consulta for bem-sucedida, caso contrário, retorna false.
-   */
-  public function getUsers()
+  /*   public function createArmario($letra, $numero, $localization)
   {
-    // Prepara a consulta SQL para obter todos os usuários.
-    $sql = "SELECT id, nome, email, senha, rm, curso, type FROM usuarios";
-    $stmt = $this->_dbConnection->prepare($sql);
-
-    // Executa a consulta SQL.
-    $stmt->execute();
-
-    // Retorna os resultados como um array associativo.
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);
-  }
-
-  /**
-   * Obtém os usuários com base no nome.
-   *
-   * @param string $nome O nome dos usuários a serem obtidos.
-   *
-   * @return array|false Retorna um array associativo com os dados dos usuários se encontrados, ou false caso contrário.
-   */
-  public function getUsersByNome($nome)
-  {
-    $sql = "SELECT id, nome, email, senha, rm, curso, type FROM usuarios WHERE nome = ?";
-    $stmt = $this->_dbConnection->prepare($sql);
-
-    // Vincula o parâmetro para PDO.
-    $stmt->bindParam(1, $nome, PDO::PARAM_STR);
-
-    // Executa a consulta SQL.
-    $stmt->execute();
-
-    // Retorna o resultado como um array associativo.
-    return $stmt->fetch(PDO::FETCH_ASSOC);
-  }
-
-  /**
-   * Obtém um usuário com base no seu e-mail.
-   *
-   * @param string $email O e-mail a ser obtido.
-   *
-   * @return array|false Retorna um array associativo com os dados do usuário se encontrado, caso contrário, retorna false.
-   */
-  public function getOneUserByEmail($email)
-  {
-    // Prepara a consulta SQL para obter um usuário por E-mail.
-    $sql = "SELECT id, nome, email, senha, rm, curso, type FROM usuarios WHERE email = ?";
-    $stmt = $this->_dbConnection->prepare($sql);
-
-    // Vincula o parâmetro para PDO.
-    $stmt->bindParam(1, $email, PDO::PARAM_STR);
-
-    // Executa a consulta SQL.
-    $stmt->execute();
-
-    // Retorna o resultado como um array associativo.
-    return $stmt->fetch(PDO::FETCH_ASSOC);
-  }
-
-  /**
-   * Obtém todos os usuários de um tipo específico do banco de dados.
-   *
-   * @param string $type O tipo de usuário a ser filtrado (aluno, admin).
-   * @return array|false Retorna um array associativo com os dados dos usuários do tipo especificado se a consulta for bem-sucedida, caso contrário, retorna false.
-   */
-  public function getUsersByType($type)
-  {
-    // Prepara a consulta SQL para obter todos os usuários do tipo especificado.
-    $sql = "SELECT id, nome, email, senha, rm, curso, type FROM usuarios WHERE type = ?";
-    $stmt = $this->_dbConnection->prepare($sql);
-
-    // Vincula o parâmetro para PDO.
-    $stmt->bindParam(1, $type, PDO::PARAM_STR);
-
-    // Executa a consulta SQL.
-    $stmt->execute();
-
-    // Retorna os resultados como um array associativo.
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);
-  }
-
-  /**
-   * Obtém um aluno com base no seu RM.
-   *
-   * @param int $rm O RM aluno a ser obtido.
-   *
-   * @return array|false Retorna um array associativo com os dados do aluno se encontrado, caso contrário, retorna false.
-   */
-  public function getOneAlunoByRM($rm)
-  {
-    // Prepara a consulta SQL para obter um usuário por RM.
-    $sql = "SELECT id, nome, email, senha, rm, curso, type FROM usuarios WHERE rm = ?";
-    $stmt = $this->_dbConnection->prepare($sql);
-
-    // Vincula o parâmetro para PDO.
-    $stmt->bindParam(1, $rm, PDO::PARAM_INT);
-
-    // Executa a consulta SQL.
-    $stmt->execute();
-
-    // Retorna o resultado como um array associativo.
-    return $stmt->fetch(PDO::FETCH_ASSOC);
-  }
+    // Prepara a consulta SQL para inserir um novo administrador.
+    $stmt = $this->_dbConnection->prepare("INSERT INTO");
+  } */
 
   /**
    * Atualiza o nome, e-mail, curso e senha de um aluno no banco de dados com base no seu RM.
@@ -191,12 +378,15 @@ class DatabaseOperations extends Connection
    * @param string $curso O novo curso do aluno.
    * @param int $rm O RM do aluno a ser atualizado.
    *
-   * @return bool Retorna true se a atualização for bem-sucedida, caso contrário, retorna false.
+   * @return bool Retorna true se a atualização for bem-sucedida.
+   * Em caso de falha na consulta, retorna false.
    */
   public function updateAluno($nome, $email, $senha, $curso, $rm)
   {
     // Prepara a consulta SQL para atualizar nome, e-mail e curso de um usuário.
-    $stmt = $this->_dbConnection->prepare("UPDATE usuarios SET nome=?, email=?, curso=? WHERE rm=?");
+    $stmt = $this->_dbConnection->prepare(
+      "UPDATE usuarios SET nome = ?, email = ?, curso = ? WHERE rm = ?"
+    );
 
     // Vincula os parâmetros para PDO.
     $stmt->bindParam(1, $nome, PDO::PARAM_STR);
@@ -205,7 +395,7 @@ class DatabaseOperations extends Connection
     $stmt->bindParam(4, $curso, PDO::PARAM_STR);
     $stmt->bindParam(5, $rm, PDO::PARAM_INT);
 
-    // Executa a consulta SQL e retorna true se for bem-sucedida, caso contrário, retorna false.
+    // Executa a consulta SQL e retorna true se for bem-sucedida.
     return $stmt->execute();
   }
 
@@ -216,12 +406,15 @@ class DatabaseOperations extends Connection
    * @param string $email O novo e-mail do administrador.
    * @param string $senha A nova senha do administrador.
    *
-   * @return bool Retorna true se a atualização for bem-sucedida, caso contrário, retorna false.
+   * @return bool Retorna true se a atualização for bem-sucedida.
+   * Em caso de falha na consulta, retorna false.
    */
   public function updateAdm($nome, $email, $senha)
   {
     // Prepara a consulta SQL para atualizar nome, e-mail e senha de um usuário.
-    $stmt = $this->_dbConnection->prepare("UPDATE usuarios SET nome=?, email=?, senha=? WHERE email=?");
+    $stmt = $this->_dbConnection->prepare(
+      "UPDATE usuarios SET nome = ?, email = ?, senha = ? WHERE email = ?"
+    );
 
     // Vincula os parâmetros para PDO.
     $stmt->bindParam(1, $nome, PDO::PARAM_STR);
@@ -229,7 +422,7 @@ class DatabaseOperations extends Connection
     $stmt->bindParam(3, $senha, PDO::PARAM_STR);
     $stmt->bindParam(4, $email, PDO::PARAM_STR);
 
-    // Executa a consulta SQL e retorna true se for bem-sucedida, caso contrário, retorna false.
+    // Executa a consulta SQL e retorna true se for bem-sucedida.
     return $stmt->execute();
   }
 
@@ -248,7 +441,7 @@ class DatabaseOperations extends Connection
     // Vincula o parâmetro para PDO.
     $stmt->bindParam(1, $rm, PDO::PARAM_INT);
 
-    // Executa a consulta SQL e retorna true se for bem-sucedida, caso contrário, retorna false.
+    // Executa a consulta SQL e retorna true se for bem-sucedida.
     return $stmt->execute();
   }
 
@@ -259,15 +452,17 @@ class DatabaseOperations extends Connection
    *
    * @return bool Retorna true se o administrador foi excluído com sucesso, false caso contrário.
    */
-  public function deleteAdm($email)
+  /*   public function deleteAdm($email)
   {
     // Prepara a consulta SQL para deletar um usuário.
-    $stmt = $this->_dbConnection->prepare("DELETE FROM usuarios WHERE email = ?");
+    $stmt = $this->_dbConnection->prepare(
+      "DELETE FROM usuarios WHERE email = ?"
+    );
 
     // Vincula o parâmetro para PDO.
     $stmt->bindParam(1, $email, PDO::PARAM_INT);
 
-    // Executa a consulta SQL e retorna true se for bem-sucedida, caso contrário, retorna false.
+    // Executa a consulta SQL e retorna true se for bem-sucedida.
     return $stmt->execute();
-  }
+  } */
 }
